@@ -94,7 +94,7 @@ class Atom(object):
         
     def cart_to_frac(self):
         """"Converts cartesian coordinates to fractional."""
-        self.frac_xyz = inv_matrix.dot(self.cart_xyz)
+        self.frac_xyz = self.cart_xyz.dot(inv_matrix)
  
 
     def __str__(self):
@@ -120,9 +120,6 @@ print(gold.cart_xyz)
 gold.cart_to_frac()
 print('Recalculated fractional coords:')
 print(gold.frac_xyz)
-    
-    
-(a.cross(b)).dot(c)   
     
     
 #c = {"one": 1, "two": 2}
