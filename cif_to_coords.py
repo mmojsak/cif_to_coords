@@ -51,8 +51,8 @@ for (index, coord) in enumerate(atom_fract_coord_z_list):
     
 # defining the orthogonalisation matrix
 
-#ax = a
-#ay = 0
+#ax = a    # for some reason this doesn't work - domain error pops up
+#ay = 0    # when calculating cz with the square root
 #az = 0
 #bx = b * cos(gamma)
 #by = b * sin(gamma)
@@ -87,7 +87,6 @@ class Atom(object):
         #self.frac_z = frac_xyz[2]
         
         self.cart_xyz = frac_xyz.dot(matrix)
-        
         #self.cart_x = self.cart_xyz[0]
         #self.cart_y = self.cart_xyz[1]
         #self.cart_z = self.cart_xyz[2]
@@ -95,7 +94,10 @@ class Atom(object):
     def cart_to_frac(self):
         """"Converts cartesian coordinates to fractional."""
         self.frac_xyz = self.cart_xyz.dot(inv_matrix)
- 
+        
+    def frac_to_cart(self):
+        """"Converts fractional coordinates to cartesian."""
+        self.cart_xyz = self.frac_xyz.dot(matrix)
 
     def __str__(self):
         return f"An Atom object representing {self.atype}, labelled {self.label}."
@@ -106,20 +108,22 @@ for i in range(0,len(atom_label_list)):
                 frac_xyz=np.array([atom_fract_coord_x_list[i], atom_fract_coord_y_list[i], atom_fract_coord_z_list[i]]))
     atoms.append(atom)
     
-#for atom in atoms:
-#    print(atom.frac_xyz)
-    
+
+print('Unit cell dimensions:')    
 print(a, b, c)
+print()
 
-gold = atoms[0]
+test_atom = atoms[1]
 print('Original fractional coords:')
-print(gold.frac_xyz)
+print(test_atom.frac_xyz)
+print()
 print('Calculated cartesian coords:')
-print(gold.cart_xyz)
+print(test_atom.cart_xyz)
+print()
 
-gold.cart_to_frac()
+test_atom.cart_to_frac()
 print('Recalculated fractional coords:')
-print(gold.frac_xyz)
+print(test_atom.frac_xyz)
     
     
 #c = {"one": 1, "two": 2}
