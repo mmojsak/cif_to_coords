@@ -1,10 +1,10 @@
 #cif_path = input("Please give the path to your .cif: ")
-
 #print(f"The path to your cif is: {cif_path}")
+#print()
 
 from gemmi import cif as cif_parser
 import numpy as np
-from numpy import sin, cos, radians
+from numpy import sin, cos, radians, degrees
 
 def cert_float(string_with_uncertainty):
     """Converts a string representing a value with uncertainty to a 'certain' float."""
@@ -73,7 +73,7 @@ cx = c * cos(beta)
 cy = -c * sin(beta) * ((cos(beta)*cos(gamma)-cos(alpha))/(sin(beta)*sin(gamma)))
 cz = vol / (a * b * sin(gamma))
 
-matrix = np.array([np.array([ax,bx,cx]),np.array([ay,by,cy]),np.array([az,bz,cz])])
+matrix = np.array([np.array([ax,ay,az]),np.array([bx,by,bz]),np.array([cx,cy,cz])])
 inv_matrix = np.linalg.inv(matrix)
 
 class Atom(object):
@@ -86,18 +86,18 @@ class Atom(object):
         #self.frac_y = frac_xyz[1]
         #self.frac_z = frac_xyz[2]
         
-        self.cart_xyz = frac_xyz.dot(matrix)
+        self.cart_xyz = matrix.dot(frac_xyz)
         #self.cart_x = self.cart_xyz[0]
         #self.cart_y = self.cart_xyz[1]
         #self.cart_z = self.cart_xyz[2]
         
     def cart_to_frac(self):
         """"Converts cartesian coordinates to fractional."""
-        self.frac_xyz = self.cart_xyz.dot(inv_matrix)
+        self.frac_xyz = inv_matrix.dot(self.cart_xyz)
         
     def frac_to_cart(self):
         """"Converts fractional coordinates to cartesian."""
-        self.cart_xyz = self.frac_xyz.dot(matrix)
+        self.cart_xyz = matrix.dot(self.frac_xyz)
 
     def __str__(self):
         return f"An Atom object representing {self.atype}, labelled {self.label}."
@@ -108,12 +108,28 @@ for i in range(0,len(atom_label_list)):
                 frac_xyz=np.array([atom_fract_coord_x_list[i], atom_fract_coord_y_list[i], atom_fract_coord_z_list[i]]))
     atoms.append(atom)
     
-
-print('Unit cell dimensions:')    
+print()
+print('Unit cell dimensions (a, b, c) in angstroms are:')    
 print(a, b, c)
 print()
 
-test_atom = atoms[1]
+print('Unit cell aangles (alpha, beta, gamma) in degrees are:')    
+print(degrees(alpha), degrees(beta), degrees(gamma))
+print()
+
+print('Unit cell volume in angstroms cubed is:')    
+print(vol)
+print()
+
+print('The orthogonalisation matrix is:')
+print(matrix)
+print()
+
+print('There are', len(atoms), 'atoms in the unit cell.')
+index_of_atom_to_test = int(input("Test atom number: "))
+print()
+
+test_atom = atoms[index_of_atom_to_test]
 print('Original fractional coords:')
 print(test_atom.frac_xyz)
 print()
@@ -128,5 +144,5 @@ print(test_atom.frac_xyz)
     
 #c = {"one": 1, "two": 2}
 #for k, v in c.items():
-#    exec(f"{k} = {v}") 
+#    exec(f"{k} = {v}")
 
